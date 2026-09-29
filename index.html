@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#070b14">
+  <meta name="color-scheme" content="dark">
+
+  <meta
+    name="description"
+    content="LastMusic — a premium local-first music player."
+  >
+
+  <title>LastMusic</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Metadata reader. It runs in the browser; local files are not uploaded. -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.5/dist/jsmediatags.min.js"
+  ></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="app-bg">
+    <div class="aurora aurora-1"></div>
+    <div class="aurora aurora-2"></div>
+    <div class="aurora aurora-3"></div>
+    <div class="noise"></div>
+  </div>
+
+  <main class="app">
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="topbar">
+
+      <div class="brand-wrap">
+        <div class="brand-mark">
+          <span class="brand-wave"></span>
+          <span class="brand-wave"></span>
+          <span class="brand-wave"></span>
+        </div>
+
+        <div>
+          <div class="brand-name">LastMusic</div>
+          <div class="brand-subtitle">By SACHIN</div>
+        </div>
+      </div>
+
+      <button
+        class="icon-btn glass-btn"
+        id="settingsBtn"
+        aria-label="Settings"
+      >
+        <span class="icon">⚙</span>
+      </button>
+
+    </header>
+
+
+    <!-- ================= HOME ================= -->
+
+    <section class="page active" id="homePage">
+
+      <div class="hero-card">
+
+        <div class="hero-glow"></div>
+
+        <div class="hero-content">
+
+          <span class="eyebrow">
+            YOUR PERSONAL PLAYER
+          </span>
+
+          <h1>
+            Music that<br>
+            stays <span>yours.</span>
+          </h1>
+
+          <p>
+            Keep your library close, beautiful and completely personal.
+          </p>
+
+          <div class="hero-actions">
+
+            <button class="primary-btn" id="importHomeBtn">
+              <span>＋</span>
+              Add Music
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="hero-disc">
+          <div class="hero-disc-inner">
+            <div class="hero-disc-hole"></div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- Quick actions -->
+
+      <div class="quick-grid">
+
+
+
+        <button class="quick-card" data-action="favorites">
+          <div class="quick-icon pink">♥</div>
+          <div>
+            <strong>Favorites</strong>
+            <span>Your loved tracks</span>
+          </div>
+        </button>
+
+        <button class="quick-card" data-action="shuffle">
+          <div class="quick-icon blue">↝</div>
+          <div>
+            <strong>Shuffle</strong>
+            <span>Mix your library</span>
+          </div>
+        </button>
+
+
+
+      </div>
+
+
+      <!-- Recently played -->
+
+      <section class="content-section">
+
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">LISTEN AGAIN</span>
+            <h2>Recently Played</h2>
+          </div>
+
+          <button class="text-btn" data-action="history">
+            See all
+          </button>
+        </div>
+
+        <div class="horizontal-list" id="recentList">
+          <div class="empty-small">
+            <span>♪</span>
+            <p>Your recently played songs will appear here.</p>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- Albums -->
+
+      <section class="content-section">
+
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">COLLECTION</span>
+            <h2>Albums</h2>
+          </div>
+
+          <button class="text-btn" data-action="albums">
+            See all
+          </button>
+        </div>
+
+        <div class="album-row" id="albumPreview"></div>
+
+      </section>
+
+    </section>
+
+
+    <!-- ================= SEARCH ================= -->
+
+    <section class="page" id="searchPage">
+
+      <div class="page-heading">
+        <span class="section-kicker">DISCOVER</span>
+        <h1>Search</h1>
+        <p>Find anything inside your personal library.</p>
+      </div>
+
+      <div class="search-box glass">
+
+        <span class="search-icon">⌕</span>
+
+        <input
+          id="searchInput"
+          type="search"
+          autocomplete="off"
+          placeholder="Songs, artists, albums..."
+        >
+
+        <button id="clearSearch" class="search-clear">×</button>
+
+      </div>
+
+      <div class="search-tabs">
+        <button class="search-tab active" data-search-filter="all">
+          All
+        </button>
+
+        <button class="search-tab" data-search-filter="songs">
+          Songs
+        </button>
+
+        <button class="search-tab" data-search-filter="albums">
+          Albums
+        </button>
+
+        <button class="search-tab" data-search-filter="artists">
+          Artists
+        </button>
+      </div>
+
+      <div id="searchResults" class="track-list"></div>
+
+    </section>
+
+
+    <!-- ================= LIBRARY ================= -->
+
+    <section class="page" id="libraryPage">
+
+      <div class="page-heading library-heading">
+
+        <div>
+          <span class="section-kicker">YOUR COLLECTION</span>
+          <h1>Library</h1>
+          <p id="libraryCount">0 songs</p>
+        </div>
+
+        <button class="round-add" id="libraryAddBtn">
+          ＋
+        </button>
+
+      </div>
+
+
+      <div class="library-tabs">
+
+        <button class="library-tab active" data-library-tab="songs">
+          Songs
+        </button>
+
+        <button class="library-tab" data-library-tab="albums">
+          Albums
+        </button>
+
+        <button class="library-tab" data-library-tab="artists">
+          Artists
+        </button>
+
+        <button class="library-tab" data-library-tab="playlists">
+          Favourites
+        </button>
+
+      </div>
+
+
+      <div id="libraryContent"></div>
+
+    </section>
+
+
+    <!-- ================= BOTTOM NAV ================= -->
+
+    <nav class="bottom-nav glass">
+
+      <button class="nav-item active" data-page="homePage">
+        <span class="nav-icon">⌂</span>
+        <span>Home</span>
+      </button>
+
+      <button class="nav-item" data-page="searchPage">
+        <span class="nav-icon">⌕</span>
+        <span>Search</span>
+      </button>
+
+      <button class="nav-item create-nav" id="createNavBtn">
+        <span class="create-circle">＋</span>
+      </button>
+
+      <button class="nav-item" data-page="libraryPage">
+        <span class="nav-icon">▤</span>
+        <span>Library</span>
+      </button>
+
+      <button class="nav-item" id="openNowPlayingNav">
+        <span class="nav-icon">♫</span>
+        <span>Player</span>
+      </button>
+
+    </nav>
+
+
+    <!-- ================= MINI PLAYER ================= -->
+
+    <div id="miniPlayer" class="mini-player glass hidden">
+
+      <div class="mini-progress">
+        <span id="miniProgress"></span>
+      </div>
+
+      <button class="mini-main" id="miniMain">
+
+        <div class="mini-art-wrap">
+          <img id="miniArt" class="mini-art" alt="">
+          <div class="mini-playing-ring"></div>
+        </div>
+
+        <div class="mini-info">
+          <strong id="miniTitle">Nothing playing</strong>
+          <span id="miniArtist">Choose a song</span>
+        </div>
+
+      </button>
+
+      <button class="mini-action" id="miniFavorite">♡</button>
+
+      <button class="mini-action play-mini" id="miniPlay">
+        ▶
+      </button>
+
+      <button class="mini-action" id="miniNext">
+        ›
+      </button>
+
+    </div>
+
+
+    <!-- ================= NOW PLAYING ================= -->
+
+    <section id="nowPlaying" class="now-playing">
+
+      <div class="np-backdrop"></div>
+
+      <div class="np-top">
+
+        <button class="np-close" id="closeNowPlaying">
+          ↓
+        </button>
+
+        <div class="np-label">
+          NOW PLAYING
+        </div>
+
+        <button class="np-more" id="npMore">
+          ⋮
+        </button>
+
+      </div>
+
+
+      <div class="np-content">
+
+        <div class="np-art-container">
+
+          <div class="np-art-glow"></div>
+
+          <div class="np-art-shell" id="npArtShell">
+            <img id="npArt" class="np-art" alt="">
+          </div>
+
+        </div>
+
+
+        <div class="np-song-row">
+
+          <div class="np-song-text">
+
+            <h1 id="npTitle">Nothing playing</h1>
+
+            <p id="npArtist">Select a song from your library</p>
+
+          </div>
+
+          <button id="npFavorite" class="favorite-large">
+            ♡
+          </button>
+
+        </div>
+
+
+        <div class="visualizer" id="visualizer">
+
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+
+        </div>
+
+
+        <div class="seek-area">
+
+          <input
+            id="seekBar"
+            class="seek-bar"
+            type="range"
+            min="0"
+            max="100"
+            value="0"
+          >
+
+          <div class="time-row">
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+          </div>
+
+        </div>
+
+
+        <div class="main-controls">
+
+          <button id="shuffleBtn" class="control-small">
+            ⤨
+          </button>
+
+          <button id="previousBtn" class="control-main">
+            ‹
+          </button>
+
+          <button id="playBtn" class="play-button">
+            ▶
+          </button>
+
+          <button id="nextBtn" class="control-main">
+            ›
+          </button>
+
+          <button id="repeatBtn" class="control-small">
+            ↻
+          </button>
+
+        </div>
+
+
+        <div class="utility-row">
+
+          <button class="utility-btn" id="lyricsBtn">
+            <span>♬</span>
+            <small>Lyrics</small>
+          </button>
+
+          <button class="utility-btn" id="sleepBtn">
+            <span>◴</span>
+            <small>Sleep</small>
+          </button>
+
+          <button class="utility-btn" id="visualizerBtn">
+            <span>≋</span>
+            <small>Visual</small>
+          </button>
+
+          <button class="utility-btn" id="queueBtn">
+            <span>☷</span>
+            <small>Queue</small>
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= QUEUE ================= -->
+
+    <section id="queueSheet" class="bottom-sheet">
+
+      <div class="sheet-handle"></div>
+
+      <div class="sheet-header">
+        <div>
+          <span class="section-kicker">PLAY NEXT</span>
+          <h2>Queue</h2>
+        </div>
+
+        <button class="sheet-close" data-close-sheet>
+          ×
+        </button>
+      </div>
+
+      <div id="queueContent" class="sheet-content"></div>
+
+    </section>
+
+
+    <!-- ================= SETTINGS SHEET ================= -->
+
+    <section id="settingsSheet" class="bottom-sheet">
+
+      <div class="sheet-handle"></div>
+
+      <div class="sheet-header">
+        <div>
+          <span class="eyebrow">PREFERENCES</span>
+          <h2>Settings</h2>
+        </div>
+        <button class="sheet-close" data-close-sheet>✕</button>
+      </div>
+
+      <div class="sheet-content">
+        <div class="settings-group">
+          <div class="settings-item">
+            <div class="settings-meta">
+              <strong>Library Stats</strong>
+              <span id="settingsStatsText">Loading stats...</span>
+            </div>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-meta">
+              <strong>Storage Management</strong>
+              <span id="settingsStorageText">Calculating...</span>
+            </div>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-meta">
+              <strong>Reset Library</strong>
+              <span>Delete all local tracks, favorites, and saved playback</span>
+            </div>
+            <button class="danger-btn" id="clearLibraryBtn">Clear All</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ================= CLEAR LIBRARY MODAL ================= -->
+
+    <div class="modal-backdrop" id="clearConfirmModal">
+      <div class="modal glass compact-modal">
+        <div class="modal-top">
+          <div>
+            <span class="eyebrow" style="color: var(--danger);">DANGER ZONE</span>
+            <h2>Clear Library?</h2>
+          </div>
+          <button class="modal-close" data-close-modal>✕</button>
+        </div>
+
+        <p class="modal-description">
+          This will permanently remove all imported local songs, saved playback queues, and preferences. Cloud-synced songs will remain available.
+        </p>
+
+        <div style="display: flex; gap: 10px; margin-top: 18px;">
+          <button class="secondary-btn" style="flex: 1;" data-close-modal>
+            Cancel
+          </button>
+          <button class="danger-btn" style="flex: 1;" id="executeClearBtn">
+            Reset Everything
+          </button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ================= ADD SOURCE SHEET ================= -->
+
+    <section id="sourceSheet" class="bottom-sheet">
+
+      <div class="sheet-handle"></div>
+
+      <div class="sheet-header">
+
+        <div>
+          <span class="section-kicker">ADD MUSIC</span>
+          <h2>Choose source</h2>
+        </div>
+
+        <button class="sheet-close" data-close-sheet>
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="source-grid">
+
+        <button class="source-card" id="sourceFiles">
+          <div class="source-icon blue">♫</div>
+          <strong>Music files</strong>
+          <span>Choose audio from device</span>
+        </button>
+
+        <button class="source-card" id="sourceFolder">
+          <div class="source-icon purple">▦</div>
+          <strong>Music folder</strong>
+          <span>Import an entire folder</span>
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= EDIT MODAL ================= -->
+
+    <div id="editModal" class="modal-backdrop">
+
+      <div class="modal glass">
+
+        <div class="modal-top">
+
+          <div>
+            <span class="section-kicker">CUSTOMIZE</span>
+            <h2>Edit song</h2>
+          </div>
+
+          <button class="modal-close" data-close-modal>
+            ×
+          </button>
+
+        </div>
+
+
+        <div class="edit-art-row">
+
+          <img id="editArtPreview" class="edit-art" alt="">
+
+          <label class="art-upload-btn">
+            Change artwork
+            <input id="artInput" type="file" accept="image/*">
+          </label>
+
+        </div>
+
+
+        <label class="field-label">
+          Title
+
+          <div class="field-wrap">
+            <span>♪</span>
+            <input id="editTitle" type="text">
+          </div>
+
+        </label>
+
+
+        <label class="field-label">
+          Artist
+
+          <div class="field-wrap">
+            <span>•</span>
+            <input id="editArtist" type="text">
+          </div>
+
+        </label>
+
+
+        <label class="field-label">
+          Album
+
+          <div class="field-wrap">
+            <span>▣</span>
+            <input id="editAlbum" type="text">
+          </div>
+
+        </label>
+
+
+        <button id="saveEditBtn" class="primary-btn full">
+          Save changes
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= SLEEP MODAL ================= -->
+
+    <div id="sleepModal" class="modal-backdrop">
+
+      <div class="modal glass compact-modal">
+
+        <div class="modal-top">
+
+          <div>
+            <span class="section-kicker">AUTOMATION</span>
+            <h2>Sleep timer</h2>
+          </div>
+
+          <button class="modal-close" data-close-modal>
+            ×
+          </button>
+
+        </div>
+
+
+        <div class="timer-options">
+
+          <button data-sleep="5">5 min</button>
+          <button data-sleep="10">10 min</button>
+          <button data-sleep="15">15 min</button>
+          <button data-sleep="30">30 min</button>
+          <button data-sleep="45">45 min</button>
+          <button data-sleep="60">60 min</button>
+
+        </div>
+
+
+        <button id="cancelSleep" class="danger-btn full">
+          Cancel timer
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= CONTEXT SHEET ================= -->
+
+    <section id="contextSheet" class="bottom-sheet context-sheet">
+
+      <div class="sheet-handle"></div>
+
+      <div class="context-song">
+
+        <img id="contextArt" alt="">
+
+        <div>
+          <strong id="contextTitle">Song</strong>
+          <span id="contextArtist">Artist</span>
+        </div>
+
+      </div>
+
+
+      <div class="context-actions">
+
+        <button data-context="play">
+          <span>▶</span>
+          Play now
+        </button>
+
+        <button data-context="queue">
+          <span>☷</span>
+          Add to queue
+        </button>
+
+        <button data-context="favorite">
+          <span>♥</span>
+          Favorite
+        </button>
+
+        <button data-context="edit">
+          <span>✎</span>
+          Edit
+        </button>
+
+        <button data-context="share">
+          <span>↗</span>
+          Share
+        </button>
+
+        <button data-context="delete" class="danger-text">
+          <span>⌫</span>
+          Remove from library
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= TOAST ================= -->
+
+    <div id="toast" class="toast">
+      <span class="toast-icon">✓</span>
+      <span id="toastText">Done</span>
+    </div>
+
+
+    <!-- ================= FILE INPUTS ================= -->
+
+    <input
+      id="fileInput"
+      type="file"
+      hidden
+      multiple
+      accept="audio/*,.mp3,.m4a,.aac,.flac,.wav,.ogg,.opus"
+    >
+
+    <input
+      id="folderInput"
+      type="file"
+      hidden
+      multiple
+      webkitdirectory
+      directory
+      accept="audio/*,.mp3,.m4a,.aac,.flac,.wav,.ogg,.opus"
+    >
+
+
+    <!-- ================= AUDIO ================= -->
+
+    <audio id="audio" preload="metadata"></audio>
+
+  </main>
+
+ <script src="cloud-songs.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
