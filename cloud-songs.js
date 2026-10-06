@@ -13,10 +13,7 @@ const CLOUD_SONG_LIST = `
 
 CLOUD:
 Unakkul Naane.mp3 | Unakkul Naane | Harris Jayaraj | 1.jpg
-
-
-Favorites:
-
+2.mp3 | Timi Nacha Na | Wangden Sherpa | 2.jpg
 
 `;
 
