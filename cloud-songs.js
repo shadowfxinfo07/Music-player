@@ -23,6 +23,10 @@ Unakkul Naane.mp3 | Unakkul Naane | Harris Jayaraj | 1.jpg
 5.mp3 | Golden Brown | the stranglers | 5.jpg
 
 6.mp3 | Zalimaa | Arijit Singh | 6.jpg
+
+7.mp3 | Samjhawan | Arijit Singh | 6.jpeg
+
+8.mp3 | Rakhlo tum chupake | Arpit Bala | 6.jpg
 `;
 
 /* Parser runs automatically — no manual edits needed below */
