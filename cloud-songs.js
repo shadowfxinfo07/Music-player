@@ -27,6 +27,12 @@ Unakkul Naane.mp3 | Unakkul Naane | Harris Jayaraj | 1.jpg
 7.mp3 | Samjhawan | Arijit Singh | 7.jpg
 
 8.mp3 | Rakhlo tum chupake | Arpit Bala | 8.jpg
+
+9.mp3 | Taare | Saswat Balan, Farak | 9.jpg
+
+10.mp3 | Headlights (feat. KIDDO) | Alok, Alan Walker, KIDDO | 10.jpg
+
+11.mp3 | Sunday | Aditya A, Naalayak | 11.jpg
 `;
 
 /* Parser runs automatically — no manual edits needed below */
