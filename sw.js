@@ -52,3 +52,25 @@ self.addEventListener('fetch', (event) => {
       .catch(() => caches.match(event.request)) // Fallback to cache only when offline
   );
 });
+const OFFLINE_MEDIA_CACHE = "lastmusic-media-cache";
+
+self.addEventListener("install", (event) => {
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      // Return cached version if found (works offline)
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      // Otherwise fetch live from the internet
+      return fetch(event.request);
+    })
+  );
+});
