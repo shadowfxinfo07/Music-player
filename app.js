@@ -1934,3 +1934,136 @@ function createDefaultArtwork() {
 
   return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
 }
+const OFFLINE_CACHE_NAME = "lastmusic-media-cache";
+
+const loadOfflineBtn = document.getElementById("loadOfflineBtn");
+const goOnlineBtn = document.getElementById("goOnlineBtn");
+const offlineStatusText = document.getElementById("offlineStatusText");
+
+// Check current offline cache status on load
+async function checkOfflineStatus() {
+  if (!("caches" in window)) return;
+  const exists = await caches.has(OFFLINE_CACHE_NAME);
+  if (exists) {
+    const cache = await caches.open(OFFLINE_CACHE_NAME);
+    const keys = await cache.keys();
+    if (keys.length > 0) {
+      if (offlineStatusText) {
+        offlineStatusText.textContent = `Offline ready (${keys.length} items cached)`;
+        offlineStatusText.style.color = "#76a0ff";
+      }
+      return;
+    }
+  }
+  if (offlineStatusText) {
+    offlineStatusText.textContent = "Online mode (Files not cached)";
+    offlineStatusText.style.color = "";
+  }
+}
+
+// 1. Download & Save All Tracks and App Assets to Browser Cache
+if (loadOfflineBtn) {
+  loadOfflineBtn.addEventListener("click", async () => {
+    if (!("caches" in window)) {
+      alert("Offline caching is not supported in this browser.");
+      return;
+    }
+
+    // List of static shell assets
+    const coreUrls = [
+      "./",
+      "./index.html",
+      "./style.css",
+      "./app.js",
+      "./cloud-songs.js",
+      "./manifest.json"
+    ];
+
+    // Collect all remote song files and artwork images
+    const mediaUrls = [];
+    if (typeof cloudSongs !== "undefined" && Array.isArray(cloudSongs)) {
+      cloudSongs.forEach((song) => {
+        if (song.url) mediaUrls.push(song.url);
+        if (song.art) mediaUrls.push(song.art);
+      });
+    }
+
+    const allUrls = [...coreUrls, ...mediaUrls];
+
+    try {
+      loadOfflineBtn.disabled = true;
+      loadOfflineBtn.textContent = "Downloading...";
+      if (offlineStatusText) offlineStatusText.textContent = "Downloading library (0%)...";
+
+      const cache = await caches.open(OFFLINE_CACHE_NAME);
+      let completed = 0;
+
+      // Fetch and cache each URL individually to handle partial failures smoothly
+      for (const url of allUrls) {
+        try {
+          const response = await fetch(url, { mode: "cors" });
+          if (response.ok) {
+            await cache.put(url, response);
+          }
+        } catch (err) {
+          console.warn(`Failed to cache ${url}:`, err);
+        }
+        completed++;
+        if (offlineStatusText) {
+          const pct = Math.round((completed / allUrls.length) * 100);
+          offlineStatusText.textContent = `Caching: ${pct}%`;
+        }
+      }
+
+      loadOfflineBtn.textContent = "Done!";
+      setTimeout(() => {
+        loadOfflineBtn.disabled = false;
+        loadOfflineBtn.textContent = "Download All Offline";
+      }, 2000);
+
+      await checkOfflineStatus();
+      if (typeof showToast === "function") {
+        showToast("Library downloaded for offline listening!");
+      }
+    } catch (error) {
+      console.error("Cache download failed:", error);
+      alert("Failed to download offline assets. Check network connection.");
+      loadOfflineBtn.disabled = false;
+      loadOfflineBtn.textContent = "Download All Offline";
+    }
+  });
+}
+
+// 2. Go Online: Delete the entire cache and free browser storage
+if (goOnlineBtn) {
+  goOnlineBtn.addEventListener("click", async () => {
+    if (!("caches" in window)) return;
+
+    try {
+      goOnlineBtn.disabled = true;
+      const deleted = await caches.delete(OFFLINE_CACHE_NAME);
+
+      if (deleted) {
+        if (offlineStatusText) {
+          offlineStatusText.textContent = "Online mode (All cached files removed)";
+          offlineStatusText.style.color = "";
+        }
+        if (typeof showToast === "function") {
+          showToast("Switched to online mode. Storage freed.");
+        }
+      } else {
+        if (offlineStatusText) {
+          offlineStatusText.textContent = "Already in online mode.";
+        }
+      }
+    } catch (err) {
+      console.error("Failed to delete cache:", err);
+    } finally {
+      goOnlineBtn.disabled = false;
+      await checkOfflineStatus();
+    }
+  });
+}
+
+// Initialize status check on boot
+checkOfflineStatus();
