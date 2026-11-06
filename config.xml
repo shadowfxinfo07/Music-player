@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.sachin.lastmusic" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>LastMusic</name>
+    <description>LastMusic — A premium local-first music player by SACHIN.</description>
+    <author email="shadowfxinfo07@gmail.com" href="https://github.com/shadowfxinfo07">SACHIN</author>
+    
+    <!-- Entry point -->
+    <content src="index.html" />
+    
+    <!-- Access Rules & Permissions -->
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+
+    <!-- Android Preferences -->
+    <platform name="android">
+        <allow-intent href="market:*" />
+        <preference name="KeepRunning" value="true" />
+        <preference name="LoadUrlTimeoutValue" value="70000" />
+        <preference name="SplashScreen" value="none" />
+        <preference name="Orientation" value="portrait" />
+        <preference name="Fullscreen" value="false" />
+        <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+        <icon density="mdpi" src="icon-192.png" />
+        <icon density="hdpi" src="icon-192.png" />
+        <icon density="xhdpi" src="icon-192.png" />
+        <icon density="xxhdpi" src="icon-192.png" />
+        <icon density="xxxhdpi" src="icon-192.png" />
+    </platform>
+</widget>
