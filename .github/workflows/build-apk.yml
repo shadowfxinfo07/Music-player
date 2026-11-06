@@ -1,0 +1,54 @@
+name: Build LastMusic APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Cordova & Build Android APK
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+        run: |
+          # 1. Install Cordova globally
+          npm install -g cordova
+
+          # 2. Create Cordova project structure
+          cordova create cordova-app com.sachin.lastmusic LastMusic
+          cd cordova-app
+
+          # 3. Use your root config.xml
+          cp ../config.xml ./config.xml
+
+          # 4. Clean default template and copy your actual website files
+          rm -rf www/*
+          rsync -av --exclude='cordova-app' --exclude='.git' --exclude='.github' ../ www/
+
+          # 5. Add Android platform and build APK
+          cordova platform add android
+          cordova build android --debug
+
+      - name: Upload LastMusic APK to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: LastMusic-Debug-APK
+          path: cordova-app/platforms/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
