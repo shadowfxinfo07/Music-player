@@ -28,21 +28,32 @@ jobs:
         env:
           ANDROID_HOME: /usr/local/lib/android/sdk
         run: |
-          # 1. Install Cordova globally
           npm install -g cordova
 
-          # 2. Create Cordova project structure
+          # Create Cordova project
           cordova create cordova-app com.sachin.lastmusic LastMusic
           cd cordova-app
 
-          # 3. Use your root config.xml
+          # Copy your config.xml
           cp ../config.xml ./config.xml
 
-          # 4. Clean default template and copy your actual website files
+          # Clean and populate www directory with your web files
           rm -rf www/*
           rsync -av --exclude='cordova-app' --exclude='.git' --exclude='.github' ../ www/
 
-          # 5. Add Android platform and build APK
+          # Find any 192 icon file regardless of leading dot/case and standardize it
+          ICON_FOUND=$(find .. -maxdepth 2 -iname "*icon*192*.png" | head -n 1)
+          if [ -n "$ICON_FOUND" ]; then
+            echo "Found icon at: $ICON_FOUND"
+            cp "$ICON_FOUND" ./icon-192.png
+            cp "$ICON_FOUND" ./www/icon-192.png
+          else
+            echo "Icon not found, generating placeholder to prevent build fail..."
+            convert -size 192x192 xc:#070b14 ./icon-192.png || touch ./icon-192.png
+            cp ./icon-192.png ./www/icon-192.png
+          fi
+
+          # Add Android platform & build debug APK
           cordova platform add android
           cordova build android --debug
 
