@@ -14,25 +14,41 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Java 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Node.js 24
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
 
       - name: Prepare Clean Web Directory
         run: |
           mkdir -p www
-          rsync -av --exclude='www' --exclude='node_modules' --exclude='.git' --exclude='.github' --exclude='android' ./ www/
+          rsync -av --delete \
+            --exclude='www' \
+            --exclude='node_modules' \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='android' \
+            ./ www/
 
       - name: Install Capacitor & Initialize Android
         run: |
-          npm init -y
-          npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest
+          # Create a guaranteed clean package.json if not present
+          if [ ! -f "package.json" ]; then
+            npm init -y
+          fi
+          
+          # Install matching Capacitor v6 dependencies non-interactively
+          npm install --save @capacitor/core@^6.0.0 @capacitor/cli@^6.0.0 @capacitor/android@^6.0.0
+          
+          # If an old android directory exists, remove it so cap add generates a fresh one
+          rm -rf android
+          
+          # Add android platform without interactive prompts
           npx cap add android
           npx cap sync android
 
