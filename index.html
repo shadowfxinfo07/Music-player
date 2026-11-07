@@ -15,7 +15,7 @@
 
   <title>LastMusic — By SACHIN</title>
 
-  <link rel="manifest" href="./app.webmanifest">
+  <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="apple-touch-icon" href="./icon-192.png">
 
@@ -829,6 +829,104 @@
       accept="audio/*,.mp3,.m4a,.aac,.flac,.wav,.ogg,.opus"
     >
 
+<!-- =========================================================
+     LASTMUSIC — AESTHETIC SONG REQUEST MODAL POP-UP
+     ========================================================= -->
+<div class="modal-backdrop request-backdrop" id="requestModalBackdrop" aria-hidden="true">
+  <div class="modal request-modal glass" id="requestModal">
+    
+    <!-- Top Bar with Glow Orb and Close Button -->
+    <div class="modal-top request-modal-top">
+      <div class="request-brand">
+        <div class="request-orb">
+          <span class="icon">✨</span>
+        </div>
+        <div>
+          <span class="eyebrow">CONTRIBUTE</span>
+          <h2>Request a <span>Track</span></h2>
+        </div>
+      </div>
+      <button type="button" class="modal-close" id="closeRequestModalBtn" aria-label="Close request modal">
+        ✕
+      </button>
+    </div>
+
+    <p class="modal-description">
+      Can't find your favorite track or phonk edit? Send it over and we'll add it to the stream library!
+    </p>
+
+    <!-- Request Form -->
+    <form id="songRequestForm" novalidate autocomplete="off">
+      
+      <!-- Your Name -->
+      <label class="field-label" for="reqUserName">YOUR ALIAS / NAME</label>
+      <div class="field-wrap">
+        <span class="field-icon">👤</span>
+        <input 
+          type="text" 
+          id="reqUserName" 
+          placeholder="e.g. Shadow / Anonymous" 
+          maxlength="40" 
+        />
+      </div>
+
+      <!-- Song Title (Mandatory) -->
+      <label class="field-label" for="reqSongTitle">
+        TRACK NAME <span class="required-star">*</span>
+      </label>
+      <div class="field-wrap mandatory-wrap">
+        <span class="field-icon">🎵</span>
+        <input 
+          type="text" 
+          id="reqSongTitle" 
+          placeholder="e.g. Midnight Phonk / Brazilian Danza" 
+          required 
+          maxlength="80" 
+        />
+        <span class="req-chip">REQUIRED</span>
+      </div>
+
+      <!-- Artist / Producer -->
+      <label class="field-label" for="reqSongArtist">ARTIST / PRODUCER (OPTIONAL)</label>
+      <div class="field-wrap">
+        <span class="field-icon">⚡</span>
+        <input 
+          type="text" 
+          id="reqSongArtist" 
+          placeholder="e.g. Kordhell, Hensonn, DVRST" 
+          maxlength="60" 
+        />
+      </div>
+
+      <!-- Extra Notes / YouTube / Spotify link -->
+      <label class="field-label" for="reqSongNotes">AUDIO LINK OR VERSION (OPTIONAL)</label>
+      <div class="field-wrap">
+        <span class="field-icon">🔗</span>
+        <input 
+          type="url" 
+          id="reqSongNotes" 
+          placeholder="YouTube link, slowed+reverb, remix..." 
+        />
+      </div>
+
+      <!-- Real-time Live Badge Preview -->
+      <div class="request-preview glass" id="requestPreview" style="display: none;">
+        <div class="preview-dot"></div>
+        <div class="preview-text">
+          <strong id="previewTitle">Song Title</strong>
+          <span id="previewSubtitle">by Unknown Artist</span>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="primary-btn full request-submit-btn" id="submitRequestBtn">
+        <span class="btn-icon">🚀</span>
+        <span class="btn-text">Submit Track Request</span>
+      </button>
+
+    </form>
+  </div>
+</div>
 
     <!-- ================= AUDIO ================= -->
 

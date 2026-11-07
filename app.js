@@ -324,13 +324,22 @@ function bindEvents() {
     }, { passive: true });
   });
 
-  on("createNavBtn", "click", openSourceSheet);
-  on("libraryAddBtn", "click", openSourceSheet);
+    on("createNavBtn", "click", () => {
+    closeAllSheets();
+    openRequestModal();
+  });
+
+  on("libraryAddBtn", "click", () => {
+    closeAllSheets();
+    openRequestModal();
+  });
 
   on("importHomeBtn", "click", () => {
     closeAllSheets();
-    $("fileInput")?.click();
+    openRequestModal();
   });
+
+
 
   on("sourceFiles", "click", () => {
     closeAllSheets();
@@ -2067,3 +2076,177 @@ if (goOnlineBtn) {
 
 // Initialize status check on boot
 checkOfflineStatus();
+/* =========================================================
+   LASTMUSIC — UNIVERSAL REQUEST MODAL CONTROLLER
+   ========================================================= */
+
+// Global window openers so bindEvents() can call them directly
+window.openRequestModal = function() {
+  const backdrop = document.getElementById("requestModalBackdrop");
+  if (!backdrop) return;
+  backdrop.style.display = "flex";
+  backdrop.offsetHeight; // trigger reflow for smooth animation
+  backdrop.classList.add("open");
+  backdrop.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+
+  const titleInput = document.getElementById("reqSongTitle");
+  setTimeout(() => titleInput?.focus(), 150);
+};
+
+window.closeRequestModal = function() {
+  const backdrop = document.getElementById("requestModalBackdrop");
+  if (!backdrop) return;
+  backdrop.classList.remove("open");
+  backdrop.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+  setTimeout(() => {
+    backdrop.style.display = "none";
+  }, 280);
+};
+
+(function initSongRequestSystem() {
+  const backdrop = document.getElementById("requestModalBackdrop");
+  const closeBtn = document.getElementById("closeRequestModalBtn");
+  const form = document.getElementById("songRequestForm");
+  const submitBtn = document.getElementById("submitRequestBtn");
+
+  const inputUser = document.getElementById("reqUserName");
+  const inputTitle = document.getElementById("reqSongTitle");
+  const inputArtist = document.getElementById("reqSongArtist");
+  const inputNotes = document.getElementById("reqSongNotes");
+
+  const previewBox = document.getElementById("requestPreview");
+  const previewTitle = document.getElementById("previewTitle");
+  const previewSubtitle = document.getElementById("previewSubtitle");
+
+  if (!backdrop || !form) return;
+
+  // Modal Close Events
+  closeBtn?.addEventListener("click", window.closeRequestModal);
+
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) window.closeRequestModal();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && backdrop.classList.contains("open")) {
+      window.closeRequestModal();
+    }
+  });
+
+  // Smart Auto-Discovery: catches any click on "+" or "add" buttons
+  document.addEventListener("click", (e) => {
+    const trigger = e.target.closest(
+      ".create-nav, .create-circle, .round-add, [data-action='add-music'], [aria-label*='Add' i], [title*='Add' i]"
+    );
+
+    if (trigger) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.openRequestModal();
+      return;
+    }
+
+    const buttonElement = e.target.closest("button");
+    if (buttonElement && buttonElement.textContent.trim() === "+") {
+      e.preventDefault();
+      e.stopPropagation();
+      window.openRequestModal();
+    }
+  }, true);
+
+  // Live Badge Preview
+  function updateLivePreview() {
+    if (!previewBox || !previewTitle || !previewSubtitle) return;
+    const titleVal = inputTitle.value.trim();
+    const artistVal = inputArtist.value.trim();
+
+    if (titleVal) {
+      previewBox.style.display = "flex";
+      previewTitle.textContent = titleVal;
+      previewSubtitle.textContent = artistVal ? `by ${artistVal}` : "by Unknown Artist";
+    } else {
+      previewBox.style.display = "none";
+    }
+  }
+
+  inputTitle?.addEventListener("input", updateLivePreview);
+  inputArtist?.addEventListener("input", updateLivePreview);
+
+  // Form Submission via Cloudflare Worker
+  const WORKER_ENDPOINT = "https://lastmusic-request.schn.workers.dev";
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const title = inputTitle.value.trim();
+    if (!title) {
+      showToast("⚠️ Song title is required!");
+      inputTitle.focus();
+      return;
+    }
+
+    const payload = {
+      user: inputUser.value.trim() || "Anonymous",
+      title: title,
+      artist: inputArtist.value.trim() || "Not specified",
+      notes: inputNotes.value.trim() || "None"
+    };
+
+    setButtonLoading(true);
+
+    try {
+      const response = await fetch(WORKER_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.ok) {
+        showToast("✅ Request sent to admin!");
+        form.reset();
+        updateLivePreview();
+        window.closeRequestModal();
+      } else {
+        throw new Error(result.description || result.error || "Failed to deliver");
+      }
+    } catch (err) {
+      console.error("Song Request Error:", err);
+      showToast("⚠️ Connection error. Please try again.");
+    } finally {
+      setButtonLoading(false);
+    }
+  });
+
+  // Single Safe Button Loading Helper
+  function setButtonLoading(loading) {
+    if (!submitBtn) return;
+    submitBtn.disabled = loading;
+    submitBtn.classList.toggle("loading", loading);
+
+    const iconSpan = submitBtn.querySelector(".btn-icon");
+    const textSpan = submitBtn.querySelector(".btn-text");
+
+    if (iconSpan && textSpan) {
+      iconSpan.textContent = loading ? "⏳" : "🚀";
+      textSpan.textContent = loading ? "Sending Request..." : "Submit Track Request";
+    } else {
+      submitBtn.innerHTML = loading ? "<span>⏳</span> Sending..." : "<span>🚀</span> Submit Track Request";
+    }
+  }
+
+  function showToast(message) {
+    const toast = document.querySelector(".toast");
+    if (!toast) {
+      alert(message);
+      return;
+    }
+    const label = toast.querySelector("#toastMsg") || toast.querySelector("span:not(.toast-icon)") || toast;
+    label.textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2600);
+  }
+})();
