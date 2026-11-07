@@ -33,6 +33,8 @@ Unakkul Naane.mp3 | Unakkul Naane | Harris Jayaraj | 1.jpg
 10.mp3 | Headlights (feat. KIDDO) | Alok, Alan Walker, KIDDO | 10.jpg
 
 11.mp3 | Sunday | Aditya A, Naalayak | 11.jpg
+
+12.mp3 | First Class | Arijit Singh | 12.jpg
 `;
 
 /* Parser runs automatically — no manual edits needed below */
