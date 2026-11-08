@@ -1,7 +1,9 @@
 const CACHE_NAME = 'lastmusic-v2'; // Bump this version (v2 -> v3) whenever you push new changes
 const ASSETS_TO_CACHE = [
   './',
-  './index.html',
+    './song',
+      './cover',
+      './index.html',
   './style.css',
   './app.js',
   './cloud-songs.js',
