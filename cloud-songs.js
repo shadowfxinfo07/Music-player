@@ -89,12 +89,12 @@ window.CLOUD_SONGS = (function() {
         !artworkUrl.startsWith("http://") &&
         !artworkUrl.startsWith("https://")
       ) {
-        artworkUrl = getCloudUrl("cover", artworkUrl);
+        artworkUrl = getCloudUrl("./cover", artworkUrl);
       }
     }
     
     // Song URL
-    const songUrl = getCloudUrl("song", fileName);
+    const songUrl = getCloudUrl("./song", fileName);
     
     result.push({
       
