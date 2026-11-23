@@ -35,6 +35,8 @@ CLOUD:
 11.mp3 | Sunday | Aditya A, Naalayak | 11.jpg
 
 12.mp3 | First Class | Arijit Singh | 12.jpg
+
+13.mp3 | Calaboose | Sidhu Moose Wala | 13.jpg
 `;
 
 /* Automatically generates cloud tracks */
