@@ -96,7 +96,7 @@ window.CLOUD_SONGS = (function() {
     }
     
     // Song URL
-    const songUrl = getCloudUrl("./song", fileName);
+    const songUrl = getCloudUrl("./Song", fileName);
     
     result.push({
       
